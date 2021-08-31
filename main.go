@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-08-31 10:49:01
+ * @LastEditTime: 2021-08-31 11:15:02
  * @Description:
  **************************************/
 
@@ -40,8 +40,8 @@ func init() {
 }
 
 func main() {
+	fmt.Println("sql2md version v1.0.0")
 	if version {
-		fmt.Println("sql2md version v1.0.0")
 		return
 	}
 	connect()
