@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 17:45:01
- * @LastEditTime: 2021-08-31 10:04:22
+ * @LastEditTime: 2021-08-31 15:27:03
  * @Description:
  **************************************/
 
@@ -23,10 +23,10 @@ type Columns struct {
 	IsNull          string         `gorm:"column:is_nullable" md:"为空"`
 	Default         sql.NullString `gorm:"column:column_default" md:"默认值"`
 	Extra           sql.NullString `gorm:"column:extra" md:"额外信息"`
-	Comment         string         `gorm:"column:column_comment" md:"注释"`
+	Comment         sql.NullString `gorm:"column:column_comment" md:"注释"`
 }
 
-func (c Columns) TableHeader() (header string) {
+func (c Columns) TableHeader(comment string) (header string) {
 	t := reflect.TypeOf(c)
 	v := reflect.ValueOf(c)
 	splitLine := ""
@@ -35,6 +35,9 @@ func (c Columns) TableHeader() (header string) {
 		tag := field.Tag.Get("md")
 		if tag == "head" {
 			header += H2 + v.Field(i).String() + "\n\n"
+			if comment != "" {
+				header += comment + "\n\n"
+			}
 			continue
 		}
 		header += "| " + tag + " "
@@ -55,6 +58,6 @@ func (c Columns) TableLine() string {
 		c.IsNull,
 		c.Default.String,
 		c.Extra.String,
-		strings.ReplaceAll(strings.ReplaceAll(c.Comment, "|", "\\|"), "\n", " "),
+		strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(c.Comment.String, "|", "\\|"), "\r", ""), "\n", " "),
 	)
 }

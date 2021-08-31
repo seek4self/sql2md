@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-08-31 11:15:02
+ * @LastEditTime: 2021-08-31 14:52:59
  * @Description:
  **************************************/
 
@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"sql2md/md"
+	"strings"
 )
 
 var (
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVar(&user, "u", user, fmt.Sprintf("mysql username, default: %s", user))
 	flag.StringVar(&pass, "p", pass, fmt.Sprintf("mysql password, default: %s", pass))
 	flag.StringVar(&dbName, "n", dbName, fmt.Sprintf("mysql database name, default: %s", dbName))
-	flag.StringVar(&tables, "t", tables, fmt.Sprintf("mysql tables, default: %s", tables))
+	flag.StringVar(&tables, "t", tables, "mysql tables, support ',' separator for filter, default all tables")
 	flag.StringVar(&output, "o", output, fmt.Sprintf("markdown output location, default: %s", dbName))
 	flag.BoolVar(&version, "v", version, fmt.Sprintf("show version and exit, default: %v", version))
 	flag.BoolVar(&debug, "d", debug, fmt.Sprintf("show sql debug log, default: %v", debug))
@@ -45,21 +46,32 @@ func main() {
 		return
 	}
 	connect()
-	tables, err := findTables()
-	if err != nil {
-		fmt.Println("find tables err", err)
-		os.Exit(1)
+	var (
+		tableList []Tables
+		err       error
+	)
+	if tables != "" {
+		tableNames := strings.Split(tables, ",")
+		for _, n := range tableNames {
+			tableList = append(tableList, Tables{Name: n})
+		}
+	} else {
+		tableList, err = findTables()
+		if err != nil {
+			fmt.Println("find tables err", err)
+			os.Exit(1)
+		}
 	}
 	mdFile := md.Open(dbName, output)
 	defer mdFile.Close()
-	for i, t := range tables {
-		fmt.Printf("%d/%d creating table %s ...\n", i, len(tables), t.Name)
+	for i, t := range tableList {
+		fmt.Printf("%d/%d creating table %s ...\n", i+1, len(tableList), t.Name)
 		columns, err := findColumns(t.Name)
 		if err != nil {
 			fmt.Printf("find table <%s> columns err: %v\n", t.Name, err)
 			continue
 		}
-		tableContent := columns[0].TableHeader()
+		tableContent := columns[0].TableHeader(t.Comment)
 		for _, c := range columns {
 			tableContent += c.TableLine()
 		}
