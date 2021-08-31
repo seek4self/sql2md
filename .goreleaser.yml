@@ -5,9 +5,6 @@ before:
   hooks:
     - go mod download
 
-gomod:
-  proxy: true
-
 builds:
   - env:
       - CGO_ENABLED=0
@@ -24,7 +21,7 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
+      - -s -w
 
 checksum:
   name_template: "checksums.txt"
