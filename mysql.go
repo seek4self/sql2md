@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 15:12:42
- * @LastEditTime: 2021-08-31 10:10:28
+ * @LastEditTime: 2021-08-31 10:53:16
  * @Description:
  **************************************/
 
@@ -38,6 +38,7 @@ func connect() {
 		db = db.Debug()
 	}
 	DB = db
+	fmt.Println("connect to mysql ok")
 }
 
 func findTables() (tableList []Tables, err error) {

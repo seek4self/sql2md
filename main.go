@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-08-31 10:09:47
+ * @LastEditTime: 2021-08-31 10:49:01
  * @Description:
  **************************************/
 
@@ -40,6 +40,10 @@ func init() {
 }
 
 func main() {
+	if version {
+		fmt.Println("sql2md version v1.0.0")
+		return
+	}
 	connect()
 	tables, err := findTables()
 	if err != nil {
@@ -49,7 +53,7 @@ func main() {
 	mdFile := md.Open(dbName, output)
 	defer mdFile.Close()
 	for i, t := range tables {
-		fmt.Printf("%d/%d table %s making ...\n", i, len(tables), t.Name)
+		fmt.Printf("%d/%d creating table %s ...\n", i, len(tables), t.Name)
 		columns, err := findColumns(t.Name)
 		if err != nil {
 			fmt.Printf("find table <%s> columns err: %v\n", t.Name, err)
