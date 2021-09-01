@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-09-01 16:19:16
- * @LastEditTime: 2021-09-01 18:08:43
+ * @LastEditTime: 2021-09-01 18:36:08
  * @Description:
  **************************************/
 
@@ -41,10 +41,7 @@ func (s *SQLite) Debug() {
 func (s *SQLite) FindTables() (ts []Tables, err error) {
 	var names []string
 	err = s.db.Table("sqlite_master").Where("type = 'table'").Pluck("tbl_name", &names).Error
-	ts = make([]Tables, len(names))
-	for i, n := range names {
-		ts[i] = Tables{Name: n}
-	}
+	ts = NewTables(names)
 	return
 }
 

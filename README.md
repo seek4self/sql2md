@@ -86,5 +86,5 @@ table preview:
 
 ## Todo list
 
-[x] add sqlite support  
-[ ] add mongodb support
+- [x] add sqlite support  
+- [ ] add mongodb support

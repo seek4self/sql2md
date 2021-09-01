@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-09-01 18:09:11
+ * @LastEditTime: 2021-09-01 18:37:03
  * @Description:
  **************************************/
 
@@ -50,15 +50,12 @@ func main() {
 	if version {
 		return
 	}
-	var db sql.DB
-	dsn := sqlite
+	typ, dsn := "mysql", fmt.Sprintf("%s:%s@(%s:%d)", user, pass, host, port)
 	if sqlite != "" {
 		_, dbName = path.Split(sqlite)
-		db = sql.NewSQL("sqlite", dbName)
-	} else {
-		db = sql.NewSQL("mysql", dbName)
-		dsn = fmt.Sprintf("%s:%s@(%s:%d)", user, pass, host, port)
+		typ, dsn = "sqlite", sqlite
 	}
+	db := sql.NewSQL(typ, dbName)
 	if err := db.Connect(dsn); err != nil {
 		return
 	}
@@ -72,10 +69,7 @@ func main() {
 		err          error
 	)
 	if tables != "" {
-		tableNames := strings.Split(tables, ",")
-		for _, n := range tableNames {
-			tableList = append(tableList, sql.Tables{Name: n})
-		}
+		tableList = sql.NewTables(strings.Split(tables, ","))
 	} else {
 		tableList, err = db.FindTables()
 		if err != nil {

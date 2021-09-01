@@ -1,13 +1,15 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-09-01 11:32:15
- * @LastEditTime: 2021-09-01 17:31:51
+ * @LastEditTime: 2021-09-01 18:35:13
  * @Description:
  **************************************/
 
 package sql
 
-import "sql2md/md"
+import (
+	"sql2md/md"
+)
 
 type Tables struct {
 	Name    string `gorm:"column:table_name"`
@@ -29,4 +31,12 @@ func NewSQL(typ, dbName string) DB {
 		return newMySQL(dbName)
 	}
 	return nil
+}
+
+func NewTables(names []string) []Tables {
+	ts := make([]Tables, len(names))
+	for i, n := range names {
+		ts[i] = Tables{Name: n}
+	}
+	return ts
 }
