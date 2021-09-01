@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-09-01 11:28:52
+ * @LastEditTime: 2021-09-01 18:09:11
  * @Description:
  **************************************/
 
@@ -11,9 +11,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 	"strings"
 
 	"sql2md/md"
+	"sql2md/sql"
 )
 
 var (
@@ -24,20 +26,22 @@ var (
 	dbName  = "mysql"
 	output  = "."
 	tables  = ""
+	sqlite  = ""
 	version = false
 	debug   = false
 )
 
 func init() {
-	flag.StringVar(&host, "h", host, fmt.Sprintf("mysql host, default: %s", host))
-	flag.IntVar(&port, "P", port, fmt.Sprintf("mysql port, default: %d", port))
-	flag.StringVar(&user, "u", user, fmt.Sprintf("mysql username, default: %s", user))
-	flag.StringVar(&pass, "p", pass, fmt.Sprintf("mysql password, default: %s", pass))
-	flag.StringVar(&dbName, "n", dbName, fmt.Sprintf("mysql database name, default: %s", dbName))
+	flag.StringVar(&host, "h", host, "mysql host")
+	flag.IntVar(&port, "P", port, "mysql port")
+	flag.StringVar(&user, "u", user, "mysql username")
+	flag.StringVar(&pass, "p", pass, "mysql password")
+	flag.StringVar(&dbName, "n", dbName, "mysql database name")
 	flag.StringVar(&tables, "t", tables, "mysql tables, support ',' separator for filter, default all tables")
-	flag.StringVar(&output, "o", output, fmt.Sprintf("markdown output location, default: %s", dbName))
-	flag.BoolVar(&version, "v", version, fmt.Sprintf("show version and exit, default: %v", version))
-	flag.BoolVar(&debug, "d", debug, fmt.Sprintf("show sql debug log, default: %v", debug))
+	flag.StringVar(&sqlite, "s", sqlite, "sqlite database path")
+	flag.StringVar(&output, "o", output, "markdown output location")
+	flag.BoolVar(&version, "v", version, "show version and exit")
+	flag.BoolVar(&debug, "d", debug, "show sql debug log")
 	flag.Parse()
 }
 
@@ -46,19 +50,34 @@ func main() {
 	if version {
 		return
 	}
-	connect()
+	var db sql.DB
+	dsn := sqlite
+	if sqlite != "" {
+		_, dbName = path.Split(sqlite)
+		db = sql.NewSQL("sqlite", dbName)
+	} else {
+		db = sql.NewSQL("mysql", dbName)
+		dsn = fmt.Sprintf("%s:%s@(%s:%d)", user, pass, host, port)
+	}
+	if err := db.Connect(dsn); err != nil {
+		return
+	}
+	if debug {
+		db.Debug()
+	}
+
 	var (
-		tableList    []Tables
+		tableList    []sql.Tables
 		tableContent string
 		err          error
 	)
 	if tables != "" {
 		tableNames := strings.Split(tables, ",")
 		for _, n := range tableNames {
-			tableList = append(tableList, Tables{Name: n})
+			tableList = append(tableList, sql.Tables{Name: n})
 		}
 	} else {
-		tableList, err = findTables()
+		tableList, err = db.FindTables()
 		if err != nil {
 			fmt.Println("find tables err", err)
 			os.Exit(1)
@@ -70,7 +89,7 @@ func main() {
 	mdFile.WriteHeader()
 	for i, t := range tableList {
 		fmt.Printf("%d/%d creating table %s ...\n", i+1, len(tableList), t.Name)
-		columns, err := findColumns(t.Name)
+		columns, err := db.FindColumns(t.Name)
 		if err != nil {
 			fmt.Printf("find table <%s> columns err: %v\n", t.Name, err)
 			continue

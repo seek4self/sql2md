@@ -10,22 +10,24 @@ a tool to export sql table schema to markdown table
 
 ```bash
 Usage of ./sql2md:
-  -h string
-        mysql host, default: 127.0.0.1 (default "127.0.0.1")
   -P int
-        mysql port, default: 3306 (default 3306)
+        mysql port (default 3306)
+  -h string
+        mysql host (default "127.0.0.1")
   -n string
-        mysql database name, default: mysql (default "mysql")
+        mysql database name (default "mysql")
   -o string
-        markdown output location, default: mysql (default ".")
+        markdown output location (default ".")
   -p string
-        mysql password, default: root (default "root")
+        mysql password (default "root")
+  -s string
+        sqlite database path
   -t string
         mysql tables, support ',' separator for filter, default all tables
   -u string
-        mysql username, default: root (default "root")
-  -v    show version and exit, default: false
-  -d    show sql debug log, default: false
+        mysql username (default "root")
+  -d    show sql debug log
+  -v    show version and exit
 ```
 
 example:
