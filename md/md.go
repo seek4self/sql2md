@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 16:33:08
- * @LastEditTime: 2021-09-01 11:09:49
+ * @LastEditTime: 2021-09-01 11:18:51
  * @Description:
  **************************************/
 
@@ -40,9 +40,12 @@ func Open(name, location string) (md *MD) {
 		os.Exit(1)
 	}
 	md.f = mdFile
+	return
+}
+
+func (md *MD) WriteHeader() {
 	fmt.Printf("write markdown header ...\n")
 	md.WriteChapter(H1 + md.title + "\n\n")
-	return
 }
 
 func (md *MD) WriteChapter(chapter string) {

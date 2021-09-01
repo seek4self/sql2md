@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-08-30 14:41:41
- * @LastEditTime: 2021-08-31 14:52:59
+ * @LastEditTime: 2021-09-01 11:28:52
  * @Description:
  **************************************/
 
@@ -11,8 +11,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"sql2md/md"
 	"strings"
+
+	"sql2md/md"
 )
 
 var (
@@ -41,14 +42,15 @@ func init() {
 }
 
 func main() {
-	fmt.Println("sql2md version v1.0.0")
+	fmt.Println("sql2md version v1.0.1")
 	if version {
 		return
 	}
 	connect()
 	var (
-		tableList []Tables
-		err       error
+		tableList    []Tables
+		tableContent string
+		err          error
 	)
 	if tables != "" {
 		tableNames := strings.Split(tables, ",")
@@ -62,8 +64,10 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
 	mdFile := md.Open(dbName, output)
 	defer mdFile.Close()
+	mdFile.WriteHeader()
 	for i, t := range tableList {
 		fmt.Printf("%d/%d creating table %s ...\n", i+1, len(tableList), t.Name)
 		columns, err := findColumns(t.Name)
@@ -71,7 +75,7 @@ func main() {
 			fmt.Printf("find table <%s> columns err: %v\n", t.Name, err)
 			continue
 		}
-		tableContent := columns[0].TableHeader(t.Comment)
+		tableContent = columns[0].TableHeader(t.Comment)
 		for _, c := range columns {
 			tableContent += c.TableLine()
 		}
