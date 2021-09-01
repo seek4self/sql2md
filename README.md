@@ -35,14 +35,14 @@ example:
 ```bash
 $ ./sql2md -p 123456 -n bmi_vdms 
 connect to mysql ok
-open markdown file
+open markdown file ...
 write markdown header ...
 1/5 creating table authorization ...
 2/5 creating table casbin_rule ...
 3/5 creating table d_video ...
 4/5 creating table s_video ...
 5/5 creating table video ...
-write md done.
+write ./bmi_vdms.md done.
 ```
 
 markdown output:
@@ -86,5 +86,5 @@ table preview:
 
 ## Todo list
 
-[ ] add sqlite support  
+[x] add sqlite support  
 [ ] add mongodb support
