@@ -2,6 +2,10 @@
 
 a tool to export sql table schema to markdown table
 
+## Install
+
+[release pkg](https://github.com/seek4self/sql2md/releases)
+
 ## Usage
 
 ```bash
