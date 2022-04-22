@@ -4,13 +4,13 @@ APP_NAME=sql2md
 RELEASE_DIR=release
 
 build-unix :
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${GC} build -ldflags -w -o ${RELEASE_DIR}/${APP_NAME}_unix ${MAIN_GO_Dir}
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${GC} build -ldflags '-s -w' -o ${RELEASE_DIR}/${APP_NAME}_unix ${MAIN_GO_Dir}
 
 build-mac :
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 ${GC} build -ldflags -w -o ${RELEASE_DIR}/${APP_NAME}_mac ${MAIN_GO_Dir}
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 ${GC} build -ldflags '-s -w' -o ${RELEASE_DIR}/${APP_NAME}_mac ${MAIN_GO_Dir}
 
 build-win :
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 ${GC} build -ldflags -w -o ${RELEASE_DIR}/${APP_NAME}_win ${MAIN_GO_Dir}
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 ${GC} build -ldflags '-s -w' -o ${RELEASE_DIR}/${APP_NAME}_win.exe ${MAIN_GO_Dir}
 
 build :
 	make build-unix

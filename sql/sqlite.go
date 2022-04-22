@@ -1,7 +1,7 @@
 /**************************************
  * @Author: mazhuang
  * @Date: 2021-09-01 16:19:16
- * @LastEditTime: 2021-09-01 18:36:08
+ * @LastEditTime: 2021-09-02 09:43:19
  * @Description:
  **************************************/
 
@@ -40,6 +40,7 @@ func (s *SQLite) Debug() {
 
 func (s *SQLite) FindTables() (ts []Tables, err error) {
 	var names []string
+	// select tbl_name from sqlite_master where type = 'table'
 	err = s.db.Table("sqlite_master").Where("type = 'table'").Pluck("tbl_name", &names).Error
 	ts = NewTables(names)
 	return
